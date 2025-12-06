@@ -30,7 +30,7 @@ export default function login(){
         setError("Nome de usuário ou senha incorretos");
 }
  function handleRegister() {
-    navegate("/1-Autenticação/registro");
+    navegate("/auth/register");
 }
  return (
   <div className="login-container">
