@@ -10,48 +10,56 @@ export default function login(){
     const navegate = useNavegate();
 
     async function handleLogin(e) {
-        e.preventDefault(); setError(""); 
-        if (!identifier || !password) {
+        e.preventDefault(); 
+        setError(""); 
+        if (!usuario.trim() || !senha.trim()) {
             setError("Há campos a serem preenchidos"); 
             return;
     }
 
     try{
         const data = await authServiços.login({usuario,senha});
-        localStorage.setItem("authToken", data.token);
-        navigate("/guest/dashboard");
-    }catch (err) { 
+        
+        if (data.user.TIPO === "admin") {
+          navegate("/administrador/dashboard");
+        } else{
+          navegate("/hospede/dashboard")
+        }
+
+    }catch { 
         setError("Nome de usuário ou senha incorretos");
+}
+ function handleRegister() {
+    navegate("/1-Autenticação/registro");
 }
  return (
   <div className="login-container">
-    <form onSubmit={handleLogin} className="login-form">
-      <h1>Entrar</h1>
+      <form onSubmit={handleLogin} className="login-form">
+        <h1>Vita Hospitality</h1>
 
-      <label htmlFor="identifier">Login (Email ou CNPJ)</label>
-      <input
-        id="identifier"
-        type="text"
-        value={identifier}
-        onChange={(e) => setIdentifier(e.target.value)}
-      />
+        <label>Email ou CPF/CNPJ</label>
+        <input
+          placeholder="Digite seu login"
+          value={identifier}
+          onChange={(e) => setUsuario(e.target.value)}
+        />
 
-      <label htmlFor="password">Senha</label>
-      <input
-        id="password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+        <label>Senha</label>
+        <input
+          type="password"
+          placeholder="Digite sua senha"
+          value={password}
+          onChange={(e) => setSenha(e.target.value)}
+        />
 
-      <div className="buttons">
-        <button type="submit">Login</button>
-        <button type="button" onClick={handleRegister}>
-          Registro
-        </button>
-      </div>
+        <div className="buttons">
+          <button className="btn" type="submit">Login</button>
+          <button className="btn" type="button" onClick={handleRegister}>
+            Registrar
+          </button>
+        </div>
 
-      {error && <p className="error">{error}</p>}
-    </form>
-  </div>
+        {error && <p className="error">{error}</p>}
+      </form>
+    </div>
     )}}
