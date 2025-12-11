@@ -1,13 +1,13 @@
-import { Routes, Route } from "react-router-dom";
-import Login from "./Paginas/1-Autenticacao/login";
-import Cadastro from "./Paginas/1-Autenticacao/registro";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./paginas/login.jsx";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/cadastro" element={<Cadastro />} />
-    </Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
