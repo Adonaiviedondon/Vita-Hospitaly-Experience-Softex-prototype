@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import authServicos from "../Servicos/authServicos";
 
-export default function Login() {
+export default function LoginCliente() {
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
   const [error, setError] = useState("");
@@ -10,58 +10,48 @@ export default function Login() {
 
   async function handleLogin(e) {
     e.preventDefault();
-    setError("");
 
-    if (!usuario.trim() || !senha.trim()) {
-      setError("preencha todos os campos");
-      return;
-    }
+
+    
 
     try {
       const data = await authServicos.login({ usuario, senha });
 
-      if (data.user.TIPO === "admin") {
-        navigate("/administrador/dashboard");
-      } else {
-        navigate("/hospede/dashboard");
+      if (data.user.TIPO !== "cliente") {
+        setError("Acesso permitido apenas para clientes");
+        return;
       }
+
+      navigate("/cliente/dashboard");
     } catch {
-      setError("usuário ou senha incorretos");
+      setError("Usuário ou senha inválidos");
     }
   }
 
-  function handleRegister() {
-    navigate("/auth/register");
-  }
+
+
 
   return (
-    <div className="login-container">
-      <form onSubmit={handleLogin} className="login-form">
-        <h1>Vita Hospitality</h1>
+    <div>
+      <h1>Login Cliente</h1>
 
-        <label>Email ou CPF/CNPJ</label>
+      <form onSubmit={handleLogin}>
         <input
-          placeholder="nome do usuario"
+          placeholder="Usuário"
           value={usuario}
           onChange={(e) => setUsuario(e.target.value)}
         />
 
-        <label>Senha</label>
+
         <input
           type="password"
-          placeholder="senha"
+          placeholder="Senha"
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
         />
 
-        <div className="buttons">
-          <button className="btn" type="submit">Login</button>
-          <button className="btn" type="button" onClick={handleRegister}>
-            Registrar
-          </button>
-        </div>
-
-        {error && <p className="error">{error}</p>}
+        <button type="submit">Entrar</button>
+        {error && <p>{error}</p>}
       </form>
     </div>
   );
