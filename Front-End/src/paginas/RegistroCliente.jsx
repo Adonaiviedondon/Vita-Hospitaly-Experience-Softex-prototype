@@ -52,7 +52,7 @@ import { useState } from "react";
         setSugestoes([]);
     }
 
-    function handleSubmit(e) {
+     async function handleSubmit(e) {
         e.preventDefault();
         setErro("");
 
@@ -74,7 +74,8 @@ import { useState } from "react";
         try {
             const  metodo = form.id ? "PUT" : "POST";
             const url = form.id
-                ? `http://localhost:8080/api/clientes/${form.id}` : "http://localhost:8080/api/clientes";
+                ? `http://localhost:8080/api/clientes/${form.id}` 
+                : "http://localhost:8080/api/clientes";
             const res = await fetch(url, {
                 method: metodo,
                 headers: { "Content-Type": "application/json" },
@@ -92,18 +93,41 @@ import { useState } from "react";
     }
 
        return(
+        <div style={{ padding: "40px" }}>
+            <h1>cadastro de cliente</h1>
+
         <form onSubmit={handleSubmit}>
-            <h1>Cadastro do Cliente</h1>
 
             <input name="login" placeholder="Email" onChange={handleChange} />
+
+            {sugestoes.length > 0 && (
+          <ul>
+            {sugestoes.map((c) => (
+              <li
+                key={c.id}
+                onClick={() => carregarCliente(c)}
+                style={{ cursor: "pointer" }}
+              >
+                {c.nome}
+              </li>
+            ))}
+          </ul>
+        )}
             <input name="senha" type="password" placeholder="Senha" onChange={handleChange} />
             <input name="nome" placeholder="Nome Completo" onChange={handleChange} />
             <input name="idade" type="number" placeholder="Idade" onChange={handleChange} />
             <input name="cpf" placeholder="CPF" onChange={handleChange} />
             <input name="sexo" placeholder="Sexo" onChange={handleChange} />
 
+            {erro && <p style={{ color: "red" }}>{erro}</p>}
+
+            <button type="submit">
+                {form.id ? "Atualizar" : "Cadastrar"}
+            </button>
+
             <button>Fazer Cadastro</button>
         </form>
+        </div>
     )
       
 }
