@@ -114,8 +114,8 @@ import { useState } from "react";
           </ul>
         )}
             <input name="senha" type="password" placeholder="Senha" onChange={handleChange} />
-            <input name="nome" placeholder="Nome Completo" onChange={handleChange} />
-            <input name="idade" type="number" placeholder="Idade" onChange={handleChange} />
+            <input name="nome" placeholder="Nome do cliente"value={form.nome} onChange={handleSearch}
+/>          <input name="idade" type="number" placeholder="Idade" onChange={handleChange} />
             <input name="cpf" placeholder="CPF" onChange={handleChange} />
             <input name="sexo" placeholder="Sexo" onChange={handleChange} />
 
