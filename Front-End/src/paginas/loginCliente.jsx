@@ -10,9 +10,7 @@ export default function LoginCliente() {
 
   async function handleLogin(e) {
     e.preventDefault();
-
-
-    
+    setError("");
 
     try {
       const data = await authServicos.login({ usuario, senha });
@@ -28,12 +26,14 @@ export default function LoginCliente() {
     }
   }
 
-
-
+  
+  function handleCadastro() {
+    navigate("/register/cliente");
+  }
 
   return (
     <div>
-      <h1>Login Cliente</h1>
+      <h1>Faça Sua Reserva</h1>
 
       <form onSubmit={handleLogin}>
         <input
@@ -41,7 +41,6 @@ export default function LoginCliente() {
           value={usuario}
           onChange={(e) => setUsuario(e.target.value)}
         />
-
 
         <input
           type="password"
@@ -51,6 +50,11 @@ export default function LoginCliente() {
         />
 
         <button type="submit">Entrar</button>
+
+        <button type="button" onClick={handleCadastro}>
+          Cadastrar
+        </button>
+
         {error && <p>{error}</p>}
       </form>
     </div>

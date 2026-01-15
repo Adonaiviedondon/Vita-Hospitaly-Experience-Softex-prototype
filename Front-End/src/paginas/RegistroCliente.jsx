@@ -89,12 +89,12 @@ import { useState } from "react";
             setErro("erro ao tentar salvar o cliente")
         }
         
-        console.log(payload);//envio para o backend
+        console.log(payload);
     }
 
        return(
         <div style={{ padding: "40px" }}>
-            <h1>cadastro de cliente</h1>
+            <h1>Vita Hospitality Cliente</h1>
 
         <form onSubmit={handleSubmit}>
 

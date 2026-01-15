@@ -12,27 +12,28 @@ export default function LoginAdmin() {
     e.preventDefault();
     setError("");
 
-    if (!usuario.trim() || !senha.trim()) {
-      setError("há campos a serem preenchidos");
-      return;
-    }
-
     try {
       const data = await authServicos.login({ usuario, senha });
 
       if (data.user.TIPO !== "admin") {
-        setError("acesso permitido apenas a administradores");
+        setError("Acesso permitido apenas para administradores");
         return;
       }
+
       navigate("/admin/dashboard");
     } catch {
-      setError("usuário ou senha incorretos");
+      setError("Usuário ou senha inválidos");
     }
   }
 
- return (
+  
+  function handleCadastro() {
+    navigate("/register/admin");
+  }
+
+  return (
     <div>
-      <h1>Login Administrador</h1>
+      <h1>Anuncie suas reservas</h1>
 
       <form onSubmit={handleLogin}>
         <input
@@ -49,6 +50,12 @@ export default function LoginAdmin() {
         />
 
         <button type="submit">Entrar</button>
+
+        {/* botão de cadastro */}
+        <button type="button" onClick={handleCadastro}>
+          Cadastro
+        </button>
+
         {error && <p>{error}</p>}
       </form>
     </div>

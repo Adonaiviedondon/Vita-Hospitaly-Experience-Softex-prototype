@@ -33,7 +33,7 @@ export default function RegistroAdmin() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h1>Cadastro Administrador</h1>
+      <h1>Vita Hospitality Admin</h1>
 
       <input name="login" placeholder="Email" onChange={handleChange} />
       <input name="senha" type="password" placeholder="Senha" onChange={handleChange} />
