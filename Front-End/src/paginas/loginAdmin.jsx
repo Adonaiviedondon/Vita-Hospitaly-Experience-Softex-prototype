@@ -32,32 +32,39 @@ export default function LoginAdmin() {
   }
 
   return (
-    <div>
+    <div className="login-container">
       <h1>Anuncie suas reservas</h1>
 
+    
       <form onSubmit={handleLogin}>
+
+      <div className="input-nome">
         <input
           placeholder="Usuário"
           value={usuario}
           onChange={(e) => setUsuario(e.target.value)}
         />
-
+        <label>Usuario</label>
+      </div>
+      
+      <div className="input-nome">
         <input
           type="password"
           placeholder="Senha"
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
         />
+        <label>senha</label>
+      </div>
+        <button className="btn" type="submit">Entrar</button>
 
-        <button type="submit">Entrar</button>
-
-        {/* botão de cadastro */}
-        <button type="button" onClick={handleCadastro}>
+        <button className="btn" type="button" onClick={handleCadastro}>
           Cadastro
         </button>
 
-        {error && <p>{error}</p>}
+        {error && <p className="error">{error}</p>}
       </form>
     </div>
   );
 }
+
