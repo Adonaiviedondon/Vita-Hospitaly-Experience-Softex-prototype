@@ -1,133 +1,86 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-    export default function RegistroCliente() {
-      const [form, setForm] = useState({
-        id: null,
-        login: "",
-        senha: "",
-        nome: "",
-        idade: "",
-        cpf: "",
-        sexo: "",
-        saldo:"",
-});
-    
-    const [erro , setErro] =useState("");
-    const [sugestoes,setSugestoes] =useState([]);
+function validarCampos(camposObrigatorios) {
+  return camposObrigatorios.every(
+    campo => campo && campo.toString().trim() !== ""
+  );
+}
 
-    function handleChange(e) {
-        setForm({ ...form, [e.target.name]: e.target.value })
+export default function RegistroCliente() {
+  const navigate = useNavigate();
+  const [mensagem, setMensagem] = useState("");
+
+  const [form, setForm] = useState({
+    login: "",
+    senha: "",
+    cpf: "",
+    idade: "",
+    sexo: "",
+  });
+
+  function handleChange(e) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  async function executarAcao(acao) {
+    setMensagem("");
+
+    const valido = validarCampos([
+      form.login,
+      form.senha,
+      form.cpf,
+      form.idade,
+      form.sexo,
+    ]);
+
+    if (!valido) {
+      setMensagem("Há campos a serem preenchidos");
+      return;
     }
 
-    async function handleSearch(e) {
-        const valor = e.target.value;
-        setForm({...form,nome: valor});
+    const url = `http://localhost:8080/usuarios/${acao !== "cadastrar" ? form.login : ""}`;
+    const method =
+      acao === "cadastrar" ? "POST" :
+      acao === "atualizar" ? "PUT" : "DELETE";
 
-        if (valor.length < 1) {
-            setSugestoes([]);
-            return;
-        }
-
-        try {
-            const res =await fetch(`http://localhost:8080/api/clientes?nome=${valor}`);
-            const data = await res.json();
-            setSugestoes(data)
-            
-        } catch  {
-            console.log("erro ao buscar o cliente")
-        }
-    }
-    function carregarCliente(cliente) {
-        setForm({
-            id:cliente.id,
-            login:cliente.login,
-            senha:"",
-            nome:cliente.nome,
-            idade:cliente.idade,
-            cpf:cliente.cpf,
-            sexo:cliente.sexo,
-            saldo:cliente.saldo,
-        });
-
-        setSugestoes([]);
-    }
-
-     async function handleSubmit(e) {
-        e.preventDefault();
-        setErro("");
-
-        if (!form.login || !form.senha || !form.nome || !form.cpf || !form.idade || !form.sexo) {
-            setErro("todos os campos precisam ser preenchidos");
-            return;
-        }
-        const payload = {
+    const body =
+      acao === "deletar"
+        ? null
+        : JSON.stringify({
             tipoUsuario: "CLIENTE",
-            login: form.login,
-            senha: form.senha,
-            nome: form.nome,
+            ...form,
             idade: Number(form.idade),
-            cpf: form.cpf,
-            sexo: form.sexo,
-            saldo: Number(form.saldo || 0)
-        };
+          });
 
-        try {
-            const  metodo = form.id ? "PUT" : "POST";
-            const url = form.id
-                ? `http://localhost:8080/api/clientes/${form.id}` 
-                : "http://localhost:8080/api/clientes";
-            const res = await fetch(url, {
-                method: metodo,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
+    await fetch(
+      acao === "cadastrar" ? "http://localhost:8080/usuarios" : url,
+      {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body,
+      }
+    );
 
-            if(!res.ok) throw new Error();
+    
+    navigate("/login-cliente");
+  }
 
-            alert("O cliente foi adicionado com sucesso")
-        } catch  {
-            setErro("erro ao tentar salvar o cliente")
-        }
-        
-        console.log(payload);
-    }
+  return (
+    <form>
+      <h1>Registro Cliente</h1>
 
-       return(
-        <div style={{ padding: "40px" }}>
-            <h1>Vita Hospitality Cliente</h1>
+      {mensagem && <p style={{ color: "red" }}>{mensagem}</p>}
 
-        <form onSubmit={handleSubmit}>
+      <input name="login" placeholder="Email" onChange={handleChange} />
+      <input name="senha" type="password" placeholder="Senha" onChange={handleChange} />
+      <input name="cpf" placeholder="CPF" onChange={handleChange} />
+      <input name="idade" type="number" placeholder="Idade" onChange={handleChange} />
+      <input name="sexo" placeholder="Sexo" onChange={handleChange} />
 
-            <input name="login" placeholder="Email" onChange={handleChange} />
-
-            {sugestoes.length > 0 && (
-          <ul>
-            {sugestoes.map((c) => (
-              <li
-                key={c.id}
-                onClick={() => carregarCliente(c)}
-                style={{ cursor: "pointer" }}
-              >
-                {c.nome}
-              </li>
-            ))}
-          </ul>
-        )}
-            <input name="senha" type="password" placeholder="Senha" onChange={handleChange} />
-            <input name="nome" placeholder="Nome do cliente"value={form.nome} onChange={handleSearch}
-/>          <input name="idade" type="number" placeholder="Idade" onChange={handleChange} />
-            <input name="cpf" placeholder="CPF" onChange={handleChange} />
-            <input name="sexo" placeholder="Sexo" onChange={handleChange} />
-
-            {erro && <p style={{ color: "red" }}>{erro}</p>}
-
-            <button type="submit">
-                {form.id ? "Atualizar" : "Cadastrar"}
-            </button>
-
-            <button>Fazer Cadastro</button>
-        </form>
-        </div>
-    )
-      
+      <button type="button" onClick={() => executarAcao("cadastrar")}>Cadastrar</button>
+      <button type="button" onClick={() => executarAcao("atualizar")}>Atualizar</button>
+      <button type="button" onClick={() => executarAcao("deletar")}>Deletar</button>
+    </form>
+  );
 }

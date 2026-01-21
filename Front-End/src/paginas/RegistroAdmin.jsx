@@ -1,48 +1,87 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
+function validarCampos(camposObrigatorios) {
+  return camposObrigatorios.every(
+    campo => campo && campo.toString().trim() !== ""
+  );
+}
 
 export default function RegistroAdmin() {
-    
+  const navigate = useNavigate();
+  const [mensagem, setMensagem] = useState("");
 
-    const [form, setForm] = useState({
-    nome: "",
-    email: "",
+  const [form, setForm] = useState({
+    login: "",
     senha: "",
-    cargo: "",
+    cpf: "",
+    idade: "",
+    sexo: "",
   });
 
   function handleChange(e) {
-    setForm({...form, [e.target.name]: e.target.value})
-    
+    setForm({ ...form, [e.target.name]: e.target.value });
   }
-  function handleSubmit(e) {
-    e.preventDefault();
 
-    const payload = {
-      tipoUsuario: "ADMIN",
-      login: form.login,
-      senha: form.senha,
-      cpf: form.cpf,
-      idade: Number(form.idade),
-      sexo: form.sexo,
-      lugaresOfertados: form.lugaresOfertados,
-    };
+  async function executarAcao(acao) {
+    setMensagem("");
 
-    console.log(payload);
+    const valido = validarCampos([
+      form.login,
+      form.senha,
+      form.cpf,
+      form.idade,
+      form.sexo,
+    ]);
+
+    if (!valido) {
+      setMensagem("Há campos a serem preenchidos");
+      return;
+    }
+
+    const url = `http://localhost:8080/usuarios/${acao !== "cadastrar" ? form.login : ""}`;
+    const method =
+      acao === "cadastrar" ? "POST" :
+      acao === "atualizar" ? "PUT" : "DELETE";
+
+    const body =
+      acao === "deletar"
+        ? null
+        : JSON.stringify({
+            tipoUsuario: "ADMIN",
+            ...form,
+            idade: Number(form.idade),
+          });
+
+    await fetch(
+      acao === "cadastrar" ? "http://localhost:8080/usuarios" : url,
+      {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body,
+      }
+    );
+
+    
+    navigate("/login-admin");
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>Vita Hospitality Admin</h1>
+    <form>
+      <h1>Registro Admin</h1>
+
+      {mensagem && <p style={{ color: "red" }}>{mensagem}</p>}
 
       <input name="login" placeholder="Email" onChange={handleChange} />
       <input name="senha" type="password" placeholder="Senha" onChange={handleChange} />
       <input name="cpf" placeholder="CPF" onChange={handleChange} />
       <input name="idade" type="number" placeholder="Idade" onChange={handleChange} />
       <input name="sexo" placeholder="Sexo" onChange={handleChange} />
-      <input name="lugaresOfertados" placeholder="Lugares ofertados" onChange={handleChange} />
+      
 
-      <button>Cadastrar</button>
+      <button type="button" onClick={() => executarAcao("cadastrar")}>Cadastrar</button>
+      <button type="button" onClick={() => executarAcao("atualizar")}>Atualizar</button>
+      <button type="button" onClick={() => executarAcao("deletar")}>Deletar</button>
     </form>
   );
 }
