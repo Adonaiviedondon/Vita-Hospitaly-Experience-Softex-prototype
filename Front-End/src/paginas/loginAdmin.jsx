@@ -67,4 +67,9 @@ export default function LoginAdmin() {
     </div>
   );
 }
+// const styles ={
+//   .btn{
+    
+//   }
+// }
 

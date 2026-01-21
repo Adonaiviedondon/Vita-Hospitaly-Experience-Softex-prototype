@@ -1,0 +1,7 @@
+INSERT INTO USUARIOS (LOGIN, SENHA, TIPO)
+VALUES ('admin@vita.com', '12345', 'admin');
+
+INSERT INTO ADMINISTRADORES (ID, NOME, CPF)
+VALUES (1, 'Administrador Meste', '1234567890');
+
+COMMIT;
