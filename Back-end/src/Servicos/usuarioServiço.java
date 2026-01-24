@@ -1,13 +1,29 @@
-@Transactional
-public void adicionarSaldo(Long clienteId, Double valor) {
+@Service
+public class UsuarioService {
 
-    if (valor <= 0) {
-        throw new BusinessException("Valor inválido");
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    public Usuario cadastrar(Usuario usuario) {
+        return usuarioRepository.save(usuario);
     }
 
-    Usuario cliente = usuarioRepository.findById(clienteId)
-        .orElseThrow(() -> new BusinessException("Cliente não encontrado"));
+    public Usuario atualizar(String login, Usuario novosDados) {
+        Usuario existente = usuarioRepository.findByLogin(login)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-    cliente.setSaldo(cliente.getSaldo() + valor);
-    usuarioRepository.save(cliente);
+        existente.setSenha(novosDados.getSenha());
+        existente.setCpf(novosDados.getCpf());
+        existente.setIdade(novosDados.getIdade());
+        existente.setSexo(novosDados.getSexo());
+
+        return usuarioRepository.save(existente);
+    }
+
+    public void deletar(String login) {
+        Usuario usuario = usuarioRepository.findByLogin(login)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        usuarioRepository.delete(usuario);
+    }
 }
