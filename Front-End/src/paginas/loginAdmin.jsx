@@ -13,10 +13,7 @@ export default function LoginAdmin() {
     setError("");
 
     try {
-      const data = await authServicos.login({
-        login: usuario,
-        senha: senha,
-      });
+      const data = await authServicos.login({ usuario, senha });
 
       if (data.tipoUsuario !== "ADMIN") {
         setError("Acesso permitido apenas para administradores");
@@ -25,13 +22,9 @@ export default function LoginAdmin() {
 
       navigate("/admin/dashboard");
     } catch (err) {
-      console.error(err);
+      console.error(err)
       setError("Usuário ou senha inválidos");
     }
-  }
-
-  function handleCadastro() {
-    navigate("/register/admin");
   }
 
   return (
@@ -39,30 +32,23 @@ export default function LoginAdmin() {
       <h1>Anuncie suas reservas</h1>
 
       <form onSubmit={handleLogin}>
-        <div className="input-nome">
-          <input
-            placeholder="Usuário"
-            value={usuario}
-            onChange={(e) => setUsuario(e.target.value)}
-          />
-          <label>Usuário</label>
-        </div>
+        <input
+          placeholder="Usuário"
+          value={usuario}
+          onChange={(e) => setUsuario(e.target.value)}
+        />
 
-        <div className="input-nome">
-          <input type="password" placeholder="Senha" value={senha} onChange={(e) => setSenha(e.target.value)}/>
-          <label>Senha</label>
-        </div>
-        <button className="btn" type="submit">Entrar</button>
-        <button className="btn" type="button" onClick={handleCadastro}> Cadastro</button>
-        {error && <p className="error">{error}</p>}
+        <input
+          type="password"
+          placeholder="Senha"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+        />
+
+        <button type="submit">Entrar</button>
+
+        {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
-    </div>   
-            
-            
-          
-          
-        
-
-        
+    </div>
   );
 }
