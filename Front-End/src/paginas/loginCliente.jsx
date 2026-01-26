@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import authServicos from "../Servicos/authServicos";
+import authServicos from "../servicos/authservicos";
 
 export default function LoginCliente() {
   const [usuario, setUsuario] = useState("");
@@ -13,7 +13,6 @@ export default function LoginCliente() {
     setError("");
 
     try {
-      // 🔥 CORREÇÃO PRINCIPAL
       const data = await authServicos.login({
         login: usuario,
         senha: senha
@@ -24,11 +23,19 @@ export default function LoginCliente() {
         return;
       }
 
+      // salva usuário logado
+      localStorage.setItem("user", JSON.stringify(data));
+
+      // redireciona para dashboard cliente
       navigate("/cliente/dashboard");
     } catch (err) {
       console.error(err);
       setError("Usuário ou senha inválidos");
     }
+  }
+
+  function irParaCadastro() {
+    navigate("/register/cliente");
   }
 
   return (
@@ -37,7 +44,7 @@ export default function LoginCliente() {
 
       <form onSubmit={handleLogin}>
         <input
-          placeholder="Usuário"
+          placeholder="Login"
           value={usuario}
           onChange={(e) => setUsuario(e.target.value)}
         />
@@ -50,6 +57,11 @@ export default function LoginCliente() {
         />
 
         <button type="submit">Entrar</button>
+
+        {/* 🔥 BOTÃO CADASTRAR (não some mais) */}
+        <button type="button" onClick={irParaCadastro}>
+          Cadastrar
+        </button>
 
         {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
