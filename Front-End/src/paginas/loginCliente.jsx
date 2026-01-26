@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import authServicos from "../servicos/authservicos";
+import authServicos from "../Servicos/authServicos";
 
 export default function LoginCliente() {
   const [usuario, setUsuario] = useState("");
@@ -13,28 +13,21 @@ export default function LoginCliente() {
     setError("");
 
     try {
-      const data = await authServicos.login({
-        login: usuario,
-        senha: senha
-      });
+      const data = await authServicos.login({ usuario, senha });
 
-      if (data.tipoUsuario !== "CLIENTE") {
+      if (data.user.TIPO !== "cliente") {
         setError("Acesso permitido apenas para clientes");
         return;
       }
 
-      // salva usuário logado
-      localStorage.setItem("user", JSON.stringify(data));
-
-      // redireciona para dashboard cliente
       navigate("/cliente/dashboard");
-    } catch (err) {
-      console.error(err);
+    } catch {
       setError("Usuário ou senha inválidos");
     }
   }
 
-  function irParaCadastro() {
+  
+  function handleCadastro() {
     navigate("/register/cliente");
   }
 
@@ -44,7 +37,7 @@ export default function LoginCliente() {
 
       <form onSubmit={handleLogin}>
         <input
-          placeholder="Login"
+          placeholder="Usuário"
           value={usuario}
           onChange={(e) => setUsuario(e.target.value)}
         />
@@ -58,12 +51,11 @@ export default function LoginCliente() {
 
         <button type="submit">Entrar</button>
 
-        {/* 🔥 BOTÃO CADASTRAR (não some mais) */}
-        <button type="button" onClick={irParaCadastro}>
+        <button type="button" onClick={handleCadastro}>
           Cadastrar
         </button>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p>{error}</p>}
       </form>
     </div>
   );

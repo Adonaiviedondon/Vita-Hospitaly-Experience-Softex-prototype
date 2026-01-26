@@ -1,99 +1,48 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-function validarCampos(camposObrigatorios) {
-  return camposObrigatorios.every(
-    campo => campo && campo.toString().trim() !== ""
-  );
-}
 
 export default function RegistroAdmin() {
-  const navigate = useNavigate();
-  const [mensagem, setMensagem] = useState("");
+    
 
-  const [form, setForm] = useState({
-    login: "",
+    const [form, setForm] = useState({
+    nome: "",
+    email: "",
     senha: "",
-    cpf: "",
-    idade: "",
-    sexo: ""
+    cargo: "",
   });
 
   function handleChange(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({...form, [e.target.name]: e.target.value})
+    
   }
+  function handleSubmit(e) {
+    e.preventDefault();
 
-  async function executarAcao(acao) {
-    setMensagem("");
+    const payload = {
+      tipoUsuario: "ADMIN",
+      login: form.login,
+      senha: form.senha,
+      cpf: form.cpf,
+      idade: Number(form.idade),
+      sexo: form.sexo,
+      lugaresOfertados: form.lugaresOfertados,
+    };
 
-    let valido = false;
-
-    // 🔹 mesmas regras do cliente
-    if (acao === "deletar") {
-      valido = validarCampos([form.login]);
-    } else {
-      valido = validarCampos(Object.values(form));
-    }
-
-    if (!valido) {
-      setMensagem(
-        acao === "cadastrar"
-          ? "Há campos a serem preenchidos"
-          : "Há dados incorretos"
-      );
-      return;
-    }
-
-    const url =
-      acao === "cadastrar"
-        ? "http://localhost:8080/usuarios"
-        : `http://localhost:8080/usuarios/${form.login}`;
-
-    const method =
-      acao === "cadastrar" ? "POST" :
-      acao === "atualizar" ? "PUT" :
-      "DELETE";
-
-    const body =
-      acao === "deletar"
-        ? null
-        : JSON.stringify({
-            tipoUsuario: "ADMIN",
-            ...form,
-            idade: Number(form.idade)
-          });
-
-    try {
-      await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body
-      });
-
-      // ✅ redireciona sempre para login admin
-      navigate("/login-admin");
-
-    } catch (err) {
-      console.error(err);
-      setMensagem("Erro ao processar a operação");
-    }
+    console.log(payload);
   }
 
   return (
-    <form>
-      <h1>Registro Admin</h1>
+    <form onSubmit={handleSubmit}>
+      <h1>Vita Hospitality Admin</h1>
 
-      {mensagem && <p style={{ color: "red" }}>{mensagem}</p>}
+      <input name="login" placeholder="Email" onChange={handleChange} />
+      <input name="senha" type="password" placeholder="Senha" onChange={handleChange} />
+      <input name="cpf" placeholder="CPF" onChange={handleChange} />
+      <input name="idade" type="number" placeholder="Idade" onChange={handleChange} />
+      <input name="sexo" placeholder="Sexo" onChange={handleChange} />
+      <input name="lugaresOfertados" placeholder="Lugares ofertados" onChange={handleChange} />
 
-      <input name="login" value={form.login} placeholder="Email" onChange={handleChange} />
-      <input name="senha" value={form.senha} type="password" placeholder="Senha" onChange={handleChange} />
-      <input name="cpf" value={form.cpf} placeholder="CPF" onChange={handleChange} />
-      <input name="idade" value={form.idade} type="number" placeholder="Idade" onChange={handleChange} />
-      <input name="sexo" value={form.sexo} placeholder="Sexo" onChange={handleChange} />
-
-      <button type="button" onClick={() => executarAcao("cadastrar")}>Cadastrar</button>
-      <button type="button" onClick={() => executarAcao("atualizar")}>Atualizar</button>
-      <button type="button" onClick={() => executarAcao("deletar")}>Deletar</button>
+      <button>Cadastrar</button>
     </form>
   );
 }

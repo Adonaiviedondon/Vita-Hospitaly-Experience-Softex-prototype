@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import authServicos from "../servicos/authservicos";
+import authServicos from "../Servicos/authServicos";
 
 export default function LoginAdmin() {
   const [usuario, setUsuario] = useState("");
@@ -15,19 +15,19 @@ export default function LoginAdmin() {
     try {
       const data = await authServicos.login({ usuario, senha });
 
-      if (data.tipoUsuario !== "ADMIN") {
+      if (data.user.TIPO !== "admin") {
         setError("Acesso permitido apenas para administradores");
         return;
       }
 
-      localStorage.setItem("user", JSON.stringify(data));
       navigate("/admin/dashboard");
     } catch {
       setError("Usuário ou senha inválidos");
     }
   }
 
-  function irParaCadastro() {
+  
+  function handleCadastro() {
     navigate("/register/admin");
   }
 
@@ -37,7 +37,7 @@ export default function LoginAdmin() {
 
       <form onSubmit={handleLogin}>
         <input
-          placeholder="Login"
+          placeholder="Usuário"
           value={usuario}
           onChange={(e) => setUsuario(e.target.value)}
         />
@@ -51,12 +51,12 @@ export default function LoginAdmin() {
 
         <button type="submit">Entrar</button>
 
-        {/* 🔥 BOTÃO QUE TINHA SUMIDO */}
-        <button type="button" onClick={irParaCadastro}>
-          Cadastrar
+        {/* botão de cadastro */}
+        <button type="button" onClick={handleCadastro}>
+          Cadastro
         </button>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p>{error}</p>}
       </form>
     </div>
   );

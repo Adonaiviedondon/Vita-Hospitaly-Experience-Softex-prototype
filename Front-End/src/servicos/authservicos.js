@@ -1,20 +1,19 @@
-const authServicos = {
-  async login({ usuario, senha }) {
-    const response = await fetch("http://localhost:8080/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        login: usuario,
-        senha: senha,
-      }),
-    });
+const API_URL = "http://localhost:3000/api/auth";
 
-    if (!response.ok) {
-      throw new Error("Login inválido");
-    }
+async function login({ usuario, senha }) {
+  const res = await fetch(`${API_URL}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ usuario, senha }),
+  });
 
-    return response.json();
-  },
-};
+  const data = await res.json();
 
-export default authServicos;
+  if (!res.ok) {
+    throw new Error(data.message || "Erro ao fazer login.");
+  }
+
+  return data;
+}
+
+export default { login };
