@@ -10,7 +10,16 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO dto) {
         try {
             Usuario usuario = authService.login(dto.getLogin(), dto.getSenha());
-            return ResponseEntity.ok(usuario);
+
+            // resposta PADRONIZADA
+            return ResponseEntity.ok(
+                Map.of(
+                    "id", usuario.getId(),
+                    "tipoUsuario", usuario.getTipoUsuario(),
+                    "login", usuario.getLogin()
+                )
+            );
+
         } catch (RuntimeException e) {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)

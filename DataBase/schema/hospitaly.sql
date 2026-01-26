@@ -67,3 +67,8 @@ CREATE TABLE HISTORICO_RESERVAS (
     CONSTRAINT FK_HIST_LUGAR
         FOREIGN KEY (LUGAR_ID) REFERENCES LUGARES(ID)
 );
+INSERT INTO usuarios (login, senha, tipo_usuario)
+VALUES ('admin', '56789', 'ADMIN');
+
+INSERT INTO usuarios (login, senha, tipo_usuario)
+VALUES ('cliente', '01234', 'CLIENTE');

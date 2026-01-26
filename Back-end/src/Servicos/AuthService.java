@@ -5,7 +5,6 @@ public class AuthService {
     private UsuarioRepository repository;
 
     public Usuario login(String login, String senha) {
-
         Usuario usuario = repository.findByLogin(login)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 

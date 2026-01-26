@@ -1,19 +1,20 @@
-const API_URL = "http://localhost:3000/api/auth";
+const API_URL = "http://localhost:8080/auth";
 
 async function login({ usuario, senha }) {
-  const res = await fetch(`${API_URL}/login`, {
+  const response = await fetch(`${API_URL}/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ usuario, senha }),
+    body: JSON.stringify({
+      login: usuario,
+      senha: senha
+    })
   });
 
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.message || "Erro ao fazer login.");
+  if (!response.ok) {
+    throw new Error("Login inválido");
   }
 
-  return data;
+  return response.json();
 }
 
 export default { login };
