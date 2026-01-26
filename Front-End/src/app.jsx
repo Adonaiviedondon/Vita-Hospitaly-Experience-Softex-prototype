@@ -5,8 +5,8 @@ import LoginCliente from "./paginas/LoginCliente";
 import LoginAdmin from "./paginas/LoginAdmin";
 import RegistroCliente from "./paginas/RegistroCliente";
 import RegistroAdmin from "./paginas/RegistroAdmin";
-import TelaPrincipalCliente from "./paginas/TelaPrincipalCliente";
-import TelaPrincipalAdmin from "./paginas/TelaPrincipalAdmin";
+import TelaPrincipalCliente from "./paginas/DashboardCliente";
+import TelaPrincipalAdmin from "./paginas/DashboardCliente";
 
 export default function App() {
   return (
