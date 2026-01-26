@@ -13,6 +13,15 @@ async function login({ usuario, senha }) {
     throw new Error(data.message || "Erro ao fazer login.");
   }
 
+  // 🔄 normalização defensiva
+  if (data.user?.tipoUsuario && !data.user.TIPO) {
+    data.user.TIPO = data.user.tipoUsuario.toLowerCase();
+  }
+
+  if (data.user?.TIPO) {
+    data.user.TIPO = data.user.TIPO.toLowerCase();
+  }
+
   return data;
 }
 

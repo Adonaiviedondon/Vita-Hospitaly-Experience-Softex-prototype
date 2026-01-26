@@ -1,45 +1,59 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import authServicos from "../Servicos/authServicos";
+import authServicos from "../servicos/authservicos";
 
 export default function LoginAdmin() {
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   async function handleLogin(e) {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       const data = await authServicos.login({ usuario, senha });
+
+      if (!data?.user) {
+        setError("Usuário ou senha inválidos");
+        return;
+      }
 
       if (data.user.TIPO !== "admin") {
         setError("Acesso permitido apenas para administradores");
         return;
       }
 
+      localStorage.setItem("user", JSON.stringify(data.user));
+      if (data.token) localStorage.setItem("token", data.token);
+
       navigate("/admin/dashboard");
+
     } catch {
       setError("Usuário ou senha inválidos");
+    } finally {
+      setLoading(false);
     }
   }
 
-  
   function handleCadastro() {
     navigate("/register/admin");
   }
 
   return (
     <div>
-      <h1>Anuncie suas reservas</h1>
+      <h1>Login Administrador</h1>
 
       <form onSubmit={handleLogin}>
         <input
           placeholder="Usuário"
           value={usuario}
           onChange={(e) => setUsuario(e.target.value)}
+          required
         />
 
         <input
@@ -47,16 +61,18 @@ export default function LoginAdmin() {
           placeholder="Senha"
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
+          required
         />
 
-        <button type="submit">Entrar</button>
-
-        {/* botão de cadastro */}
-        <button type="button" onClick={handleCadastro}>
-          Cadastro
+        <button type="submit" disabled={loading}>
+          {loading ? "Entrando..." : "Entrar"}
         </button>
 
-        {error && <p>{error}</p>}
+        <button type="button" onClick={handleCadastro}>
+          Cadastrar
+        </button>
+
+        {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
     </div>
   );

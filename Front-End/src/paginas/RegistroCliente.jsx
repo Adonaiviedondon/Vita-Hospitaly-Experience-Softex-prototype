@@ -1,133 +1,99 @@
 import { useState } from "react";
 
-    export default function RegistroCliente() {
-      const [form, setForm] = useState({
-        id: null,
-        login: "",
-        senha: "",
-        nome: "",
-        idade: "",
-        cpf: "",
-        sexo: "",
-        saldo:"",
-});
-    
-    const [erro , setErro] =useState("");
-    const [sugestoes,setSugestoes] =useState([]);
+export default function RegistroCliente() {
+  const [form, setForm] = useState({
+    login: "",
+    senha: "",
+    cpf: "",
+    idade: "",
+    sexo: "",
+  });
 
-    function handleChange(e) {
-        setForm({ ...form, [e.target.name]: e.target.value })
-    }
+  const [modoEdicao, setModoEdicao] = useState(false);
 
-    async function handleSearch(e) {
-        const valor = e.target.value;
-        setForm({...form,nome: valor});
+  function handleChange(e) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
 
-        if (valor.length < 1) {
-            setSugestoes([]);
-            return;
-        }
+  function handleCreate(e) {
+    e.preventDefault();
 
-        try {
-            const res =await fetch(`http://localhost:8080/api/clientes?nome=${valor}`);
-            const data = await res.json();
-            setSugestoes(data)
-            
-        } catch  {
-            console.log("erro ao buscar o cliente")
-        }
-    }
-    function carregarCliente(cliente) {
-        setForm({
-            id:cliente.id,
-            login:cliente.login,
-            senha:"",
-            nome:cliente.nome,
-            idade:cliente.idade,
-            cpf:cliente.cpf,
-            sexo:cliente.sexo,
-            saldo:cliente.saldo,
-        });
+    const payload = {
+      tipoUsuario: "CLIENTE",
+      login: form.login,
+      senha: form.senha,
+      cpf: form.cpf,
+      idade: Number(form.idade),
+      sexo: form.sexo,
+    };
 
-        setSugestoes([]);
-    }
+    console.log("CRIAR CLIENTE:", payload);
 
-     async function handleSubmit(e) {
-        e.preventDefault();
-        setErro("");
+    setForm({
+      login: "",
+      senha: "",
+      cpf: "",
+      idade: "",
+      sexo: "",
+    });
+  }
 
-        if (!form.login || !form.senha || !form.nome || !form.cpf || !form.idade || !form.sexo) {
-            setErro("todos os campos precisam ser preenchidos");
-            return;
-        }
-        const payload = {
-            tipoUsuario: "CLIENTE",
-            login: form.login,
-            senha: form.senha,
-            nome: form.nome,
-            idade: Number(form.idade),
-            cpf: form.cpf,
-            sexo: form.sexo,
-            saldo: Number(form.saldo || 0)
-        };
+  function handleUpdate() {
+    console.log("ATUALIZAR CLIENTE:", form);
+    setModoEdicao(false);
+  }
 
-        try {
-            const  metodo = form.id ? "PUT" : "POST";
-            const url = form.id
-                ? `http://localhost:8080/api/clientes/${form.id}` 
-                : "http://localhost:8080/api/clientes";
-            const res = await fetch(url, {
-                method: metodo,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
-            });
+  function handleDelete() {
+    console.log("EXCLUIR CLIENTE:", form.login);
+    setModoEdicao(false);
+    setForm({
+      login: "",
+      senha: "",
+      cpf: "",
+      idade: "",
+      sexo: "",
+    });
+  }
 
-            if(!res.ok) throw new Error();
+  // simula seleção de cliente (READ)
+  function ativarEdicaoExemplo() {
+    setForm({
+      login: "cliente@teste.com",
+      senha: "",
+      cpf: "98765432100",
+      idade: "28",
+      sexo: "F",
+    });
+    setModoEdicao(true);
+  }
 
-            alert("O cliente foi adicionado com sucesso")
-        } catch  {
-            setErro("erro ao tentar salvar o cliente")
-        }
-        
-        console.log(payload);
-    }
+  return (
+    <div>
+      <h1>Vita Hospitality Cliente</h1>
 
-       return(
-        <div style={{ padding: "40px" }}>
-            <h1>Vita Hospitality Cliente</h1>
+      {!modoEdicao && (
+        <button type="button" onClick={ativarEdicaoExemplo}>
+          Simular edição de Cliente
+        </button>
+      )}
 
-        <form onSubmit={handleSubmit}>
+      <form onSubmit={handleCreate}>
+        <input name="login" placeholder="Email" value={form.login} onChange={handleChange} required />
+        <input name="senha" type="password" placeholder="Senha" value={form.senha} onChange={handleChange} required={!modoEdicao} />
+        <input name="cpf" placeholder="CPF" value={form.cpf} onChange={handleChange} />
+        <input name="idade" type="number" placeholder="Idade" value={form.idade} onChange={handleChange} />
+        <input name="sexo" placeholder="Sexo" value={form.sexo} onChange={handleChange} />
 
-            <input name="login" placeholder="Email" onChange={handleChange} />
-
-            {sugestoes.length > 0 && (
-          <ul>
-            {sugestoes.map((c) => (
-              <li
-                key={c.id}
-                onClick={() => carregarCliente(c)}
-                style={{ cursor: "pointer" }}
-              >
-                {c.nome}
-              </li>
-            ))}
-          </ul>
+        {!modoEdicao ? (
+          <button type="submit">Cadastrar</button>
+        ) : (
+          <>
+            <button type="button" onClick={handleUpdate}>Atualizar</button>
+            <button type="button" onClick={handleDelete}>Excluir</button>
+            <button type="button" onClick={() => setModoEdicao(false)}>Cancelar</button>
+          </>
         )}
-            <input name="senha" type="password" placeholder="Senha" onChange={handleChange} />
-            <input name="nome" placeholder="Nome do cliente"value={form.nome} onChange={handleSearch}
-/>          <input name="idade" type="number" placeholder="Idade" onChange={handleChange} />
-            <input name="cpf" placeholder="CPF" onChange={handleChange} />
-            <input name="sexo" placeholder="Sexo" onChange={handleChange} />
-
-            {erro && <p style={{ color: "red" }}>{erro}</p>}
-
-            <button type="submit">
-                {form.id ? "Atualizar" : "Cadastrar"}
-            </button>
-
-            <button>Fazer Cadastro</button>
-        </form>
-        </div>
-    )
-      
+      </form>
+    </div>
+  );
 }
