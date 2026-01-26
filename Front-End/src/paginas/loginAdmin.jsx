@@ -13,20 +13,23 @@ export default function LoginAdmin() {
     setError("");
 
     try {
-      const data = await authServicos.login({ usuario, senha });
+      const data = await authServicos.login({
+        login: usuario,
+        senha: senha,
+      });
 
-      if (data.user.TIPO !== "admin") {
+      if (data.tipoUsuario !== "ADMIN") {
         setError("Acesso permitido apenas para administradores");
         return;
       }
 
       navigate("/admin/dashboard");
-    } catch {
+    } catch (err) {
+      console.error(err);
       setError("Usuário ou senha inválidos");
     }
   }
 
-  
   function handleCadastro() {
     navigate("/register/admin");
   }
@@ -35,41 +38,31 @@ export default function LoginAdmin() {
     <div className="login-container">
       <h1>Anuncie suas reservas</h1>
 
-    
       <form onSubmit={handleLogin}>
+        <div className="input-nome">
+          <input
+            placeholder="Usuário"
+            value={usuario}
+            onChange={(e) => setUsuario(e.target.value)}
+          />
+          <label>Usuário</label>
+        </div>
 
-      <div className="input-nome">
-        <input
-          placeholder="Usuário"
-          value={usuario}
-          onChange={(e) => setUsuario(e.target.value)}
-        />
-        <label>Usuario</label>
-      </div>
-      
-      <div className="input-nome">
-        <input
-          type="password"
-          placeholder="Senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-        />
-        <label>senha</label>
-      </div>
+        <div className="input-nome">
+          <input type="password" placeholder="Senha" value={senha} onChange={(e) => setSenha(e.target.value)}/>
+          <label>Senha</label>
+        </div>
         <button className="btn" type="submit">Entrar</button>
-
-        <button className="btn" type="button" onClick={handleCadastro}>
-          Cadastro
-        </button>
-
+        <button className="btn" type="button" onClick={handleCadastro}> Cadastro</button>
         {error && <p className="error">{error}</p>}
       </form>
-    </div>
+    </div>   
+            
+            
+          
+          
+        
+
+        
   );
 }
-// const styles ={
-//   .btn{
-    
-//   }
-// }
-

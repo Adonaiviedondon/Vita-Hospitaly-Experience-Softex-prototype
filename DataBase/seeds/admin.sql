@@ -1,7 +1,5 @@
-INSERT INTO USUARIOS (LOGIN, SENHA, TIPO)
-VALUES ('admin@vita.com', '12345', 'admin');
+INSERT INTO usuarios (login, senha, tipo_usuario)
+VALUES ('admin', '56789', 'admin');
 
-INSERT INTO ADMINISTRADORES (ID, NOME, CPF)
-VALUES (1, 'Administrador Meste', '1234567890');
-
-COMMIT;
+INSERT INTO usuarios (login, senha, tipo_usuario)
+VALUES ('cliente', '01234', 'cliente');

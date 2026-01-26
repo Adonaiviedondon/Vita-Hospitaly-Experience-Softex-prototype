@@ -16,7 +16,7 @@ export default function RegistroAdmin() {
     senha: "",
     cpf: "",
     idade: "",
-    sexo: "",
+    sexo: ""
   });
 
   function handleChange(e) {
@@ -26,14 +26,7 @@ export default function RegistroAdmin() {
   async function executarAcao(acao, rotaLogin) {
     setMensagem("");
 
-    const valido = validarCampos([
-      form.login,
-      form.senha,
-      form.cpf,
-      form.idade,
-      form.sexo,
-    ]);
-
+    const valido = validarCampos(Object.values(form));
     if (!valido) {
       setMensagem("Há campos a serem preenchidos");
       return;
@@ -55,13 +48,13 @@ export default function RegistroAdmin() {
         : JSON.stringify({
             tipoUsuario: "ADMIN",
             ...form,
-            idade: Number(form.idade),
+            idade: Number(form.idade)
           });
 
     await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
-      body,
+      body
     });
 
     navigate(rotaLogin);
@@ -73,23 +66,15 @@ export default function RegistroAdmin() {
 
       {mensagem && <p style={{ color: "red" }}>{mensagem}</p>}
 
-      <input name="login" placeholder="Email" onChange={handleChange} />
-      <input name="senha" type="password" placeholder="Senha" onChange={handleChange} />
-      <input name="cpf" placeholder="CPF" onChange={handleChange} />
-      <input name="idade" type="number" placeholder="Idade" onChange={handleChange} />
-      <input name="sexo" placeholder="Sexo" onChange={handleChange} />
+      <input name="login" value={form.login} placeholder="Email" onChange={handleChange} />
+      <input name="senha" value={form.senha} type="password" placeholder="Senha" onChange={handleChange} />
+      <input name="cpf" value={form.cpf} placeholder="CPF" onChange={handleChange} />
+      <input name="idade" value={form.idade} type="number" placeholder="Idade" onChange={handleChange} />
+      <input name="sexo" value={form.sexo} placeholder="Sexo" onChange={handleChange} />
 
-      <button type="button" onClick={() => executarAcao("cadastrar", "/login-admin")}>
-        Cadastrar
-      </button>
-
-      <button type="button" onClick={() => executarAcao("atualizar", "/login-admin")}>
-        Atualizar
-      </button>
-
-      <button type="button" onClick={() => executarAcao("deletar", "/login-admin")}>
-        Deletar
-      </button>
+      <button type="button" onClick={() => executarAcao("cadastrar", "/login-admin")}>Cadastrar</button>
+      <button type="button" onClick={() => executarAcao("atualizar", "/login-admin")}>Atualizar</button>
+      <button type="button" onClick={() => executarAcao("deletar", "/login-admin")}>Deletar</button>
     </form>
   );
 }

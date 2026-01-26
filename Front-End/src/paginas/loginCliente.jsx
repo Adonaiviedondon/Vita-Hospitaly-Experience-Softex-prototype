@@ -13,20 +13,23 @@ export default function LoginCliente() {
     setError("");
 
     try {
-      const data = await authServicos.login({ usuario, senha });
+      const data = await authServicos.login({
+        login: usuario,
+        senha: senha,
+      });
 
-      if (data.user.TIPO !== "cliente") {
+      if (data.tipoUsuario !== "CLIENTE") {
         setError("Acesso permitido apenas para clientes");
         return;
       }
 
       navigate("/cliente/dashboard");
-    } catch {
+    } catch (err) {
+      console.error(err)
       setError("Usuário ou senha inválidos");
     }
   }
 
-  
   function handleCadastro() {
     navigate("/register/cliente");
   }
@@ -36,25 +39,10 @@ export default function LoginCliente() {
       <h1>Faça Sua Reserva</h1>
 
       <form onSubmit={handleLogin}>
-        <input
-          placeholder="Usuário"
-          value={usuario}
-          onChange={(e) => setUsuario(e.target.value)}
-        />
-
-        <input
-          type="password"
-          placeholder="Senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-        />
-
+        <input placeholder="Usuário" value={usuario} onChange={(e) => setUsuario(e.target.value)}/>
+        <input type="password" placeholder="Senha" value={senha}onChange={(e) => setSenha(e.target.value)}/>
         <button type="submit">Entrar</button>
-
-        <button type="button" onClick={handleCadastro}>
-          Cadastrar
-        </button>
-
+        <button type="button" onClick={handleCadastro}>Cadastrar</button>
         {error && <p>{error}</p>}
       </form>
     </div>

@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function validarCampos(camposObrigatorios) {
-  return camposObrigatorios.every(
-    campo => campo && campo.toString().trim() !== ""
-  );
+function validarCampos(campos) {
+  return campos.every(c => c && c.toString().trim() !== "");
 }
 
 export default function RegistroCliente() {
@@ -17,25 +15,17 @@ export default function RegistroCliente() {
     nome: "",
     cpf: "",
     idade: "",
-    sexo: "",
+    sexo: ""
   });
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  async function executarAcao(acao, rotaLogin) {
+  async function executarAcao(acao) {
     setMensagem("");
 
-    const valido = validarCampos([
-      form.login,
-      form.senha,
-      form.nome,
-      form.cpf,
-      form.idade,
-      form.sexo,
-    ]);
-
+    const valido = validarCampos(Object.values(form));
     if (!valido) {
       setMensagem("Há campos a serem preenchidos");
       return;
@@ -48,8 +38,7 @@ export default function RegistroCliente() {
 
     const method =
       acao === "cadastrar" ? "POST" :
-      acao === "atualizar" ? "PUT" :
-      "DELETE";
+      acao === "atualizar" ? "PUT" : "DELETE";
 
     const body =
       acao === "deletar"
@@ -57,16 +46,16 @@ export default function RegistroCliente() {
         : JSON.stringify({
             tipoUsuario: "CLIENTE",
             ...form,
-            idade: Number(form.idade),
+            idade: Number(form.idade)
           });
 
     await fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
-      body,
+      body
     });
 
-    navigate(rotaLogin);
+    navigate("/login-cliente");
   }
 
   return (
@@ -75,33 +64,16 @@ export default function RegistroCliente() {
 
       {mensagem && <p style={{ color: "red" }}>{mensagem}</p>}
 
-      <input name="login" placeholder="Email" onChange={handleChange} />
-      <input name="senha" type="password" placeholder="Senha" onChange={handleChange} />
-      <input name="nome" placeholder="Nome" onChange={handleChange} />
-      <input name="cpf" placeholder="CPF" onChange={handleChange} />
-      <input name="idade" type="number" placeholder="Idade" onChange={handleChange} />
-      <input name="sexo" placeholder="Sexo" onChange={handleChange} />
+      <input name="login" value={form.login} placeholder="Email" onChange={handleChange} />
+      <input name="senha" value={form.senha} type="password" placeholder="Senha" onChange={handleChange} />
+      <input name="nome" value={form.nome} placeholder="Nome" onChange={handleChange} />
+      <input name="cpf" value={form.cpf} placeholder="CPF" onChange={handleChange} />
+      <input name="idade" value={form.idade} type="number" placeholder="Idade" onChange={handleChange} />
+      <input name="sexo" value={form.sexo} placeholder="Sexo" onChange={handleChange} />
 
-      <button
-        type="button"
-        onClick={() => executarAcao("cadastrar", "/login-cliente")}
-      >
-        Cadastrar
-      </button>
-
-      <button
-        type="button"
-        onClick={() => executarAcao("atualizar", "/login-cliente")}
-      >
-        Atualizar
-      </button>
-
-      <button
-        type="button"
-        onClick={() => executarAcao("deletar", "/login-cliente")}
-      >
-        Deletar
-      </button>
+      <button type="button" onClick={() => executarAcao("cadastrar")}>Cadastrar</button>
+      <button type="button" onClick={() => executarAcao("atualizar")}>Atualizar</button>
+      <button type="button" onClick={() => executarAcao("deletar")}>Deletar</button>
     </form>
   );
 }

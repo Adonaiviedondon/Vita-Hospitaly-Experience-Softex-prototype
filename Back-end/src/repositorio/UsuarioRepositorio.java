@@ -1,10 +1,5 @@
-package com.seuprojeto.vita.repository;
-
-import com.seuprojeto.vita.model.Usuario;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Optional;
-
+@Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+
     Optional<Usuario> findByLogin(String login);
 }
