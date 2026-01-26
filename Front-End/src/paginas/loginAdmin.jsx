@@ -13,7 +13,11 @@ export default function LoginAdmin() {
     setError("");
 
     try {
-      const data = await authServicos.login({ usuario, senha });
+      
+      const data = await authServicos.login({
+        login: usuario,
+        senha: senha
+      });
 
       if (data.tipoUsuario !== "ADMIN") {
         setError("Acesso permitido apenas para administradores");
@@ -22,7 +26,7 @@ export default function LoginAdmin() {
 
       navigate("/admin/dashboard");
     } catch (err) {
-      console.error(err)
+      console.error(err);
       setError("Usuário ou senha inválidos");
     }
   }

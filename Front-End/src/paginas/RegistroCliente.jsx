@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function validarCampos(campos) {
-  return campos.every(c => c && c.toString().trim() !== "");
+function validarCampos(camposObrigatorios) {
+  return camposObrigatorios.every(
+    campo => campo && campo.toString().trim() !== ""
+  );
 }
 
 export default function RegistroCliente() {
@@ -25,9 +27,21 @@ export default function RegistroCliente() {
   async function executarAcao(acao) {
     setMensagem("");
 
-    const valido = validarCampos(Object.values(form));
+    let valido = false;
+
+    // 🔹 regra correta de validação
+    if (acao === "deletar") {
+      valido = validarCampos([form.login]);
+    } else {
+      valido = validarCampos(Object.values(form));
+    }
+
     if (!valido) {
-      setMensagem("Há campos a serem preenchidos");
+      setMensagem(
+        acao === "cadastrar"
+          ? "Há campos a serem preenchidos"
+          : "Há dados incorretos"
+      );
       return;
     }
 
@@ -38,7 +52,8 @@ export default function RegistroCliente() {
 
     const method =
       acao === "cadastrar" ? "POST" :
-      acao === "atualizar" ? "PUT" : "DELETE";
+      acao === "atualizar" ? "PUT" :
+      "DELETE";
 
     const body =
       acao === "deletar"
@@ -49,13 +64,20 @@ export default function RegistroCliente() {
             idade: Number(form.idade)
           });
 
-    await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body
-    });
+    try {
+      await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body
+      });
 
-    navigate("/login-cliente");
+      // ✅ sempre volta para login do cliente
+      navigate("/login-cliente");
+
+    } catch (err) {
+      console.error(err);
+      setMensagem("Erro ao processar a operação");
+    }
   }
 
   return (

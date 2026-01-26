@@ -13,7 +13,11 @@ export default function LoginCliente() {
     setError("");
 
     try {
-      const data = await authServicos.login({ usuario, senha });
+      // 🔥 CORREÇÃO PRINCIPAL
+      const data = await authServicos.login({
+        login: usuario,
+        senha: senha
+      });
 
       if (data.tipoUsuario !== "CLIENTE") {
         setError("Acesso permitido apenas para clientes");
@@ -22,7 +26,7 @@ export default function LoginCliente() {
 
       navigate("/cliente/dashboard");
     } catch (err) {
-      console.error(err)
+      console.error(err);
       setError("Usuário ou senha inválidos");
     }
   }

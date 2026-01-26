@@ -23,12 +23,24 @@ export default function RegistroAdmin() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  async function executarAcao(acao, rotaLogin) {
+  async function executarAcao(acao) {
     setMensagem("");
 
-    const valido = validarCampos(Object.values(form));
+    let valido = false;
+
+    // 🔹 mesmas regras do cliente
+    if (acao === "deletar") {
+      valido = validarCampos([form.login]);
+    } else {
+      valido = validarCampos(Object.values(form));
+    }
+
     if (!valido) {
-      setMensagem("Há campos a serem preenchidos");
+      setMensagem(
+        acao === "cadastrar"
+          ? "Há campos a serem preenchidos"
+          : "Há dados incorretos"
+      );
       return;
     }
 
@@ -51,13 +63,20 @@ export default function RegistroAdmin() {
             idade: Number(form.idade)
           });
 
-    await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body
-    });
+    try {
+      await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body
+      });
 
-    navigate(rotaLogin);
+      // ✅ redireciona sempre para login admin
+      navigate("/login-admin");
+
+    } catch (err) {
+      console.error(err);
+      setMensagem("Erro ao processar a operação");
+    }
   }
 
   return (
@@ -72,9 +91,9 @@ export default function RegistroAdmin() {
       <input name="idade" value={form.idade} type="number" placeholder="Idade" onChange={handleChange} />
       <input name="sexo" value={form.sexo} placeholder="Sexo" onChange={handleChange} />
 
-      <button type="button" onClick={() => executarAcao("cadastrar", "/login-admin")}>Cadastrar</button>
-      <button type="button" onClick={() => executarAcao("atualizar", "/login-admin")}>Atualizar</button>
-      <button type="button" onClick={() => executarAcao("deletar", "/login-admin")}>Deletar</button>
+      <button type="button" onClick={() => executarAcao("cadastrar")}>Cadastrar</button>
+      <button type="button" onClick={() => executarAcao("atualizar")}>Atualizar</button>
+      <button type="button" onClick={() => executarAcao("deletar")}>Deletar</button>
     </form>
   );
 }
