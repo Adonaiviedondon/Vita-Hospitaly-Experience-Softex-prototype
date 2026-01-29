@@ -16,20 +16,32 @@ export default function LoginCliente() {
     setLoading(true);
 
     try {
-      const data = await authServicos.login({ usuario, senha });
+      const data = await authServicos.login({
+        usuario: usuario.trim(),
+        senha: senha.trim(),
+      });
 
       if (!data?.user) {
         setError("Usuário ou senha inválidos");
         return;
       }
 
-      if (data.user.TIPO !== "cliente") {
+      // ✅ normaliza o tipo para evitar erro
+      const tipo = data.user.TIPO?.toLowerCase();
+
+      if (tipo !== "cliente") {
         setError("Acesso permitido apenas para clientes");
         return;
       }
 
-      localStorage.setItem("user", JSON.stringify(data.user));
-      if (data.token) localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify({
+        ...data.user,
+        TIPO: tipo
+      }));
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
 
       navigate("/cliente/dashboard");
 

@@ -1,23 +1,25 @@
+// src/App.jsx
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Home from "./paginas/Home";
-import LoginCliente from "./paginas/LoginCliente";
-import LoginAdmin from "./paginas/LoginAdmin";
-import RegistroCliente from "./paginas/RegistroCliente";
-import RegistroAdmin from "./paginas/RegistroAdmin";
+import LoginCliente from "./pages/LoginCliente";
+import LoginAdmin from "./pages/LoginAdmin";
+import DashboardCliente from "./pages/DashboardCliente";
+import DashboardAdmin from "./pages/DashboardAdmin";
 
-export default function App() {
+function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        {/* Login */}
+        <Route path="/" element={<LoginCliente />} />
+        <Route path="/login-admin" element={<LoginAdmin />} />
 
-        <Route path="/login/cliente" element={<LoginCliente />} />
-        <Route path="/login/admin" element={<LoginAdmin />} />
-
-        <Route path="/register/cliente" element={<RegistroCliente />} />
-        <Route path="/register/admin" element={<RegistroAdmin />} />
+        {/* Dashboards */}
+        <Route path="/dashboardCliente" element={<DashboardCliente />} />
+        <Route path="/dashboardAdmin" element={<DashboardAdmin />} />
       </Routes>
     </BrowserRouter>
   );
 }
+
+export default App;

@@ -16,20 +16,35 @@ export default function LoginAdmin() {
     setLoading(true);
 
     try {
-      const data = await authServicos.login({ usuario, senha });
+      const data = await authServicos.login({
+        usuario: usuario.trim(),
+        senha: senha.trim(),
+      });
 
       if (!data?.user) {
         setError("Usuário ou senha inválidos");
         return;
       }
 
-      if (data.user.TIPO !== "admin") {
+      // ✅ normaliza o tipo para evitar erro
+      const tipo = data.user.TIPO?.toLowerCase();
+
+      if (tipo !== "admin") {
         setError("Acesso permitido apenas para administradores");
         return;
       }
 
-      localStorage.setItem("user", JSON.stringify(data.user));
-      if (data.token) localStorage.setItem("token", data.token);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          ...data.user,
+          TIPO: tipo,
+        })
+      );
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
 
       navigate("/admin/dashboard");
 
